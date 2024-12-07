@@ -104,6 +104,24 @@ public class Main {
 
 
 
+    }  //comp metodes beigas
+
+private static Node buildHuffmanTree(Map<Character, Integer> letterFrequencyMap) {
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+
+        //itirejam cauri katram hashmap "entry" kur katrs no viniem ir kaut-kads burts ar taa attiecigo frequency un katram izveidojam jaunu "Node"
+        for (Map.Entry<Character, Integer> entry : letterFrequencyMap.entrySet()) {
+            pq.add(new Node(entry.getKey(), entry.getValue()));
+        }
+
+        //kamer nav viens vienigs galigs Node sasniegts, si koda dala savieno mazako frekvencu nodes un taisa vel divas ta vietaa
+        while (pq.size() > 1) {
+            Node left = pq.poll();
+            Node right = pq.poll();
+            pq.add(new Node(left.frequency + right.frequency, left, right));
+        }
+
+        return pq.poll();
     }
 
     static class Node implements Comparable<Node> {
