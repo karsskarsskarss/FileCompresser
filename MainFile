@@ -233,8 +233,9 @@ private static String encodedMetaDataAndData(Map<Character, Integer> freqMap, St
 	
 	public static void about() {
 		// TODO insert information about authors
-		System.out.println("000RDB000 Jānis Programmētājs");
-		System.out.println("111RDB111 Ilze Programmētāja");
+		System.out.println("241RDB214 Artemijs Terlanovs");
+		System.out.println("241RDB216 Asnate Riceva");
+		System.out.println("000FFF000 Arturs *uzvards* ")
 	}
 }
 
