@@ -169,6 +169,18 @@ private static void generateCodesHelperMethod(Node node, String code, Map<Charac
 
 }
 
+//izveidojam metodi kas saglaba gan frequencyMap (biezuma tabulu) datus  gan tiesi kompreseta faila datus
+private static String encodedMetaDataAndData(Map<Character, Integer> freqMap, String encodedData){
+        StringBuilder metaData = new StringBuilder();
+
+        // itirejot cauri frequencyMap tabulai, pierakstam un saglabajam tos veid kas pierakstis tos sadi:
+        //  ja musu biezuma tabula butu [a=3 , b=5 , c=2] tad iekodetaja izksatisies sadi : {a:3;b:5;c:2;} un saglabajam "metaData"
+        freqMap.forEach((character, frequency) -> metaData.append(character).append(":").append(frequency).append(";"));
+
+
+        return metaData.toString() + "|" + encodedData;
+}
+
 	public static void decomp(String sourceFile, String resultFile) {
 		// TODO: implement this method
 	}
