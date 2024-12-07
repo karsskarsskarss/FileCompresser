@@ -147,6 +147,28 @@ private static Node buildHuffmanTree(Map<Character, Integer> letterFrequencyMap)
         }
     }
 
+private static Map<Character,String> generateCodes(Node root){
+    //izveidojam Hashmap lai ievietotu tur generetos kodus
+    Map<Character, String> codes = new HashMap<>();
+    generateCodesHelperMethod(root, "", codes);
+
+    return codes;
+}
+
+private static void generateCodesHelperMethod(Node node, String code, Map<Character, String > codes){
+        //ja tiek sasniegts node kurs ir tukss (null) tad ar to neko nedaram.
+        if(node == null) return;
+
+        //ja node nav null node, pievieno attiecigo hufman kodu tam nodam.
+        if(node.charachter != '\0'){
+            codes.put(node.charachter, code);
+        }
+        //rekursivi izsaucam so metodi lai pievienotu zara  esosajam kodam attiecigi 0 vai 1 skatoties vai tas ir labais vai kreisais zars.
+        generateCodesHelperMethod(node.left, code + "0" , codes);
+        generateCodesHelperMethod(node.right, code + "1" , codes);
+
+}
+
 	public static void decomp(String sourceFile, String resultFile) {
 		// TODO: implement this method
 	}
