@@ -3,8 +3,13 @@
 // 000FFF000 Arturs
 
 import java.io.FileInputStream;
+import java.io.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Scanner;
+
 
 
 public class Main {
@@ -57,9 +62,49 @@ public class Main {
 		sc.close();
 	}
 
-	public static void comp(String sourceFile, String resultFile) {
-		// TODO: implement this method
-	}
+	 public static void comp(String sourceFile, String resultFile) {
+        Map<Character, Integer> letterFrequencyMap = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFile))) {
+            String line;
+
+//Izveidoju HashMap, kur glabasies faila charachters frequency
+            while ((line = br.readLine()) != null) {
+// Cikls lai izskanetu failu un pierakstitu katra burta biezumu
+                for (char c : line.toCharArray()) {
+                    letterFrequencyMap.put(c, letterFrequencyMap.getOrDefault(c, 0) + 1);
+                }
+            }
+
+// Taisam Huffman koku ar ieprieks izeidoto metodi
+            Node root = buildHuffmanTree(letterFrequencyMap);
+
+
+// generejam huffman tree kodus.
+            Map<Character, String> huffmanCodes = generateCodes(root);
+
+
+    //Step 4: encode the data
+            try(BufferedReader br2 = new BufferedReader(new FileReader(sourceFile));
+                BufferedWriter bw = new BufferedWriter(new FileWriter(resultFile))) {
+                StringBuilder encodedData = new StringBuilder();
+                while ((line = br2.readLine()) != null  ){
+                    for (char c : line.toCharArray()){
+                        encodedData.append(huffmanCodes.get(c));
+                    }
+                }
+            bw.write(encodedMetaDataAndData(letterFrequencyMap, encodedData.toString()));
+            }
+
+
+
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+
+
+    }
 
 	public static void decomp(String sourceFile, String resultFile) {
 		// TODO: implement this method
