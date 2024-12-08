@@ -1,6 +1,6 @@
 // 241RDB214 Artemijs Terlanovs
 // 241RDB216 Asnate Riceva
-// 000FFF000 Arturs
+// 211REC029 Arturs Jānis Karss
 
 import java.io.FileInputStream;
 import java.io.*;
@@ -235,7 +235,7 @@ private static String encodedMetaDataAndData(Map<Character, Integer> freqMap, St
 		// TODO insert information about authors
 		System.out.println("241RDB214 Artemijs Terlanovs");
 		System.out.println("241RDB216 Asnate Riceva");
-		System.out.println("000FFF000 Arturs *uzvards* ")
+		System.out.println("211REC029 Arturs Jānis Karss ")
 	}
 }
 
