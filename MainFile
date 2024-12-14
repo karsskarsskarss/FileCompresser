@@ -182,8 +182,92 @@ private static String encodedMetaDataAndData(Map<Character, Integer> freqMap, St
 }
 
 	public static void decomp(String sourceFile, String resultFile) {
-		// TODO: implement this method
-	}
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFile), StandardCharsets.UTF_8));
+             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(resultFile), StandardCharsets.UTF_8))) {
+    
+            String line = br.readLine();
+            if (line == null || !line.contains("|")) {
+                throw new IOException("Invalid compressed file format. Metadata or encoded data is missing.");
+            }
+    
+            String[] parts = line.split("\\|", 2);
+            if (parts.length < 2) {
+                throw new IOException("Invalid compressed file format. Missing encoded data.");
+            }
+            String metaData = parts[0];
+            String encodedData = parts[1];
+    
+            Map<Character, Integer> freqMap = new HashMap<>();
+            int entryCount = 0; 
+            for (String entry : metaData.split(";")) {
+                entryCount++;
+                if (entry.isEmpty()) {
+                    System.err.println("Skipping empty metadata entry at position: " + entryCount);
+                    continue;
+                }
+    
+                String[] keyValue = entry.split(":", 2);
+    
+                // Validate key-value pair
+                if (keyValue.length != 2 || keyValue[0].isEmpty() || keyValue[1].isEmpty()) {
+                    System.err.println("Skipping malformed metadata entry at position " + entryCount + ": " + entry);
+                    continue;
+                }
+    
+                try {
+                    String escapedCharacter = keyValue[0];
+                    int frequency = Integer.parseInt(keyValue[1]);
+    
+                    char character;
+
+                    if (escapedCharacter.startsWith("\\u")) {
+                        if (escapedCharacter.length() != 6) {
+                            System.err.println("Skipping invalid Unicode escape sequence at position " + entryCount + ": " + escapedCharacter);
+                            continue;
+                        }
+                        character = (char) Integer.parseInt(escapedCharacter.substring(2), 16);
+                    } else if (escapedCharacter.equals("\\|")) {
+                        character = '|';
+                    } else if (escapedCharacter.equals("\\;")) {
+                        character = ';';
+                    } else if (escapedCharacter.length() == 1) {
+                        character = escapedCharacter.charAt(0);
+                    } else {
+                        System.err.println("Skipping malformed character in metadata entry at position " + entryCount + ": " + escapedCharacter);
+                        continue;
+                    }
+    
+                    freqMap.put(character, frequency);
+                } catch (NumberFormatException e) {
+                    System.err.println("Skipping malformed frequency in metadata entry at position " + entryCount + ": " + entry);
+                } catch (Exception e) {
+                    System.err.println("Skipping malformed metadata entry at position " + entryCount + ": " + entry + " due to error: " + e.getMessage());
+                }
+            }
+    
+            if (freqMap.isEmpty()) {
+                throw new IOException("Frequency map is empty. Decompression failed.");
+            }
+
+            Node root = buildHuffmanTree(freqMap);
+
+            StringBuilder decodedData = new StringBuilder();
+            Node currentNode = root;
+            for (char bit : encodedData.toCharArray()) {
+                currentNode = (bit == '0') ? currentNode.left : currentNode.right;
+
+                if (currentNode.left == null && currentNode.right == null) {
+                    decodedData.append(currentNode.charachter);
+                    currentNode = root;
+                }
+            }
+
+            bw.write(decodedData.toString());
+    
+        } catch (IOException e) {
+            System.err.println("Error during decompression: " + e.getMessage());
+        }
+    }
 	
 	public static void size(String sourceFile) {
 		try {
